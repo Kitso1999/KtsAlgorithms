@@ -193,20 +193,19 @@ void Heapify( Iter first, Sent last, Iter start, Pred pred )
     auto i = start - first;
 
     while ( i < size ) {
-        auto parent = first + i;
-        auto left_child = first + 2 * i + 1;
-        auto right_child = first + 2 * i + 2;
+        const auto l = 2 * i + 1;
+        const auto r = 2 * i + 2;
 
-        auto largest = parent;
-        if ( left_child < last && pred( *largest, *left_child ) )
-            largest = left_child;
-        if ( right_child < last && pred( *largest, *right_child ) )
-            largest = right_child;
+        auto largest = i;
+        if ( l < size && pred( *(first + largest), *(first + l) ) )
+            largest = l;
+        if ( r < size && pred( *(first + largest), *(first + r) ) )
+            largest = r;
 
-        if ( largest == parent )
+        if ( largest == i )
             return;
-        std::iter_swap( parent, largest );
-        i = std::distance( first, largest );
+        std::iter_swap( first + i, first + largest );
+        i = largest;
     }
 }
 
@@ -254,8 +253,8 @@ void MakeHeap( Iter first, Sent last, Pred pred )
     if ( first == last )
         return;
 
-    for ( auto walker = first + ( last - first ) / 2; walker-- != first; )
-        Heapify( first, last, walker, pred );
+    for ( auto walker = first + ( last - first ) / 2; walker != first; )
+        Heapify( first, last, --walker, pred );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>

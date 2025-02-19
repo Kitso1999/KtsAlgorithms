@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
-#include <concepts>
+
 #include <sorting_algorithms.hpp>
+
+#include <concepts>
+#include <array>
+#include <deque>
+#include <vector>
 
 struct BubbleSortFunc
 {
