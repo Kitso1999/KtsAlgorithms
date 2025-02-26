@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 
-#include <sorting_algorithms.hpp>
-
-#include <concepts>
+#include <algorithm>
 #include <array>
+#include <concepts>
 #include <deque>
+#include <random>
 #include <vector>
+
+import kts_sorting_algorithms;
 
 struct BubbleSortFunc
 {

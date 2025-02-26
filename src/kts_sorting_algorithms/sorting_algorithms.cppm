@@ -1,12 +1,107 @@
-#ifndef KTS_SORTINGALGORITHMS_H_
-#define KTS_SORTINGALGORITHMS_H_
+module;
 
 #include <algorithm>
-#include <random>
 #include <concepts>
 #include <iterator>
+#include <vector>
+
+export module kts_sorting_algorithms;
 
 namespace kts
+{
+template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
+         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
+void Heapify( Iter first, Sent last, Iter start, Pred pred )
+{
+    const auto size = last - first;
+    auto i = start - first;
+
+    while ( i < size ) {
+        const auto l = 2 * i + 1;
+        const auto r = 2 * i + 2;
+
+        auto largest = i;
+        if ( l < size && pred( *(first + largest), *(first + l) ) )
+            largest = l;
+        if ( r < size && pred( *(first + largest), *(first + r) ) )
+            largest = r;
+
+        if ( largest == i )
+            return;
+        std::iter_swap( first + i, first + largest );
+        i = largest;
+    }
+}
+
+template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
+         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
+void PushHeap( Iter first, Sent last, Pred pred )
+{
+    const auto size = std::distance( first, last );
+
+    if ( size > 1 )
+        for ( auto i = size; i > 0 && pred( first + i / 2, first + i ); i /= 2 )
+            std::swap( first + i / 2, first + i );
+}
+
+template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
+         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
+void PopHeap( Iter first, Sent last, Pred pred )
+{
+    std::iter_swap( first, --last );
+    Heapify( first, last, first, pred );
+}
+
+template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
+         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
+void MakeHeap( Iter first, Sent last, Pred pred )
+{
+    if ( first == last )
+        return;
+
+    for ( auto walker = first + ( last - first ) / 2; walker != first; )
+        Heapify( first, last, --walker, pred );
+}
+
+template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
+         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
+Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
+{
+    // no need to range-check check because
+    // QuickSort will call it on a non-empty range
+
+    // used for bounds checking, this is not moved around
+    const auto begin = first;
+    auto pivot( std::move( *first ) );
+
+    for ( ++first; first != last; ++first ) {
+        // skip in-place elements at the beginning
+        for ( ; first != last && pred( *first, pivot ); ++first ) {}
+
+        if ( first == last )
+            break;
+
+        // skip in-place elements at the end
+        do {
+            --last;
+        } while ( first != last && !pred( *last, pivot ) );
+
+        if ( first == last )
+            break;
+        std::iter_swap( first, last ); // swap out-of-place elements
+    }
+
+    auto pivot_pos = std::prev( first );
+    if ( begin != pivot_pos ) {
+        *begin = std::move( *pivot_pos );
+    }
+    *pivot_pos = std::move( pivot );
+    return first;
+}
+
+}
+
+export namespace kts
 {
 
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -132,42 +227,6 @@ void MergeSort( Iter first, Sent last )
 
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
          std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
-Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
-{
-    // no need to range-check check because
-    // QuickSort will call it on a non-empty range
-
-    // used for bounds checking, this is not moved around
-    const auto begin = first;
-    auto pivot( std::move( *first ) );
-
-    for ( ++first; first != last; ++first ) {
-        // skip in-place elements at the beginning
-        for ( ; first != last && pred( *first, pivot ); ++first ) {}
-
-        if ( first == last )
-            break;
-
-        // skip in-place elements at the end
-        do {
-            --last;
-        } while ( first != last && !pred( *last, pivot ) );
-
-        if ( first == last )
-            break;
-        std::iter_swap( first, last ); // swap out-of-place elements
-    }
-
-    auto pivot_pos = std::prev( first );
-    if ( begin != pivot_pos ) {
-        *begin = std::move( *pivot_pos );
-    }
-    *pivot_pos = std::move( pivot );
-    return first;
-}
-
-template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
-         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
 void QuickSort( Iter first, Sent last, Pred pred )
 {
     if ( first == last )
@@ -187,84 +246,6 @@ void QuickSort( Iter first, Sent last )
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
          std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
-void Heapify( Iter first, Sent last, Iter start, Pred pred )
-{
-    const auto size = last - first;
-    auto i = start - first;
-
-    while ( i < size ) {
-        const auto l = 2 * i + 1;
-        const auto r = 2 * i + 2;
-
-        auto largest = i;
-        if ( l < size && pred( *(first + largest), *(first + l) ) )
-            largest = l;
-        if ( r < size && pred( *(first + largest), *(first + r) ) )
-            largest = r;
-
-        if ( largest == i )
-            return;
-        std::iter_swap( first + i, first + largest );
-        i = largest;
-    }
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
-void Heapify( Iter first, Sent last, Iter start )
-{
-    Heapify( first, last, start, std::less{} );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
-         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
-void PushHeap( Iter first, Sent last, Pred pred )
-{
-    const auto size = std::distance( first, last );
-
-    if ( size > 1 )
-        for ( auto i = size; i > 0 && pred( first + i / 2, first + i ); i /= 2 )
-            std::swap( first + i / 2, first + i );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
-void PushHeap( Iter first, Sent last )
-{
-    PushHeap( first, last, std::less{} );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
-         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
-void PopHeap( Iter first, Sent last, Pred pred )
-{
-    std::iter_swap( first, --last );
-    Heapify( first, last, first, pred );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
-void PopHeap( Iter first, Sent last )
-{
-    PopHeap( first, last, std::less{} );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
-         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
-void MakeHeap( Iter first, Sent last, Pred pred )
-{
-    if ( first == last )
-        return;
-
-    for ( auto walker = first + ( last - first ) / 2; walker != first; )
-        Heapify( first, last, --walker, pred );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
-void MakeHeap( Iter first, Sent last )
-{
-    MakeHeap( first, last, std::less{} );
-}
-
-template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
-         std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
 void HeapSort( Iter first, Sent last, Pred pred )
 {
     MakeHeap( first, last, pred );
@@ -280,5 +261,3 @@ void HeapSort( Iter first, Sent last )
 }
 
 } // namespace kts
-
-#endif // KTS_SORTINGALGORITHMS_H_
