@@ -99,6 +99,24 @@ Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
     return first;
 }
 
+template<
+    std::input_iterator Iter1, std::input_iterator Iter2,
+    std::sentinel_for<Iter1> Sent1, std::sentinel_for<Iter2> Sent2,
+    std::predicate<std::iter_value_t<Iter1>, std::iter_value_t<Iter2>> Pred,
+    std::output_iterator<std::iter_value_t<Iter1>> DestIter>
+void Merge( Iter1 first_l, Sent1 last_l, Iter2 first_r, Sent2 last_r,
+            DestIter dest, Pred pred )
+{
+    while ( first_l != last_l && first_r != last_r )
+        *dest++ = pred( *first_r, *first_l ) ? *first_r++ : *first_l++;
+
+    while ( first_l != last_l )
+        *dest++ = *first_l++;
+
+    while ( first_r != last_r )
+        *dest++ = *first_r++;
+}
+
 }
 
 export namespace kts
@@ -163,33 +181,6 @@ template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent>
 void InsertionSort( Iter first, Sent last )
 {
     InsertionSort( first, last, std::less{} );
-}
-
-template<
-    std::input_iterator Iter1, std::input_iterator Iter2,
-    std::sentinel_for<Iter1> Sent1, std::sentinel_for<Iter2> Sent2,
-    std::predicate<std::iter_value_t<Iter1>, std::iter_value_t<Iter2>> Pred,
-    std::output_iterator<std::iter_value_t<Iter1>> DestIter>
-void Merge( Iter1 first_l, Sent1 last_l, Iter2 first_r, Sent2 last_r,
-            DestIter dest, Pred pred )
-{
-    while ( first_l != last_l && first_r != last_r )
-        *dest++ = pred( *first_r, *first_l ) ? *first_r++ : *first_l++;
-
-    while ( first_l != last_l )
-        *dest++ = *first_l++;
-
-    while ( first_r != last_r )
-        *dest++ = *first_r++;
-}
-template<std::input_iterator Iter1, std::input_iterator Iter2,
-         std::sentinel_for<Iter1> Sent1, std::sentinel_for<Iter2> Sent2,
-         std::output_iterator<std::iter_value_t<Iter1>> DestIter>
-    requires std::mergeable<Iter1, Iter2, DestIter, std::less<>>
-void Merge( Iter1 first_l, Sent1 last_l, Iter2 first_r, Sent2 last_r,
-            DestIter dest )
-{
-    Merge( first_l, last_l, first_r, last_r, dest, std::less{} );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
