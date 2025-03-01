@@ -5,6 +5,7 @@
 #include <concepts>
 #include <deque>
 #include <random>
+#include <ranges>
 #include <vector>
 
 import kts_sorting_algorithms;
@@ -148,3 +149,13 @@ TYPED_TEST( SortTest, SortsThousandRandomInts )
     this->func( arr.begin(), arr.end() );
     EXPECT_TRUE( std::ranges::is_sorted( arr ) );
 }
+
+TYPED_TEST( SortTest, SortsFiveIntsForwardsAndBackwards )
+{
+    std::vector v{ 6,4,3,8,1 };
+    kts::BubbleSort( v.begin(), v.end() );
+    EXPECT_TRUE( std::ranges::is_sorted( v ) );
+    kts::HeapSort( v.begin(), v.end(), std::greater<>{} );
+    EXPECT_TRUE( std::ranges::is_sorted( v, std::greater<>{} ) );
+}
+
