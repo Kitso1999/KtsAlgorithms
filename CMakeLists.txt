@@ -10,4 +10,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT ANDROID)
 endif()
 
 add_subdirectory(src/kts_sorting_algorithms)
-add_subdirectory(test)
+
+option(KTS_BUILD_TESTS "Build Kts tests" OFF)
+
+if(KTS_BUILD_TESTS)
+    add_subdirectory(test)
+endif()
