@@ -9,7 +9,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(GoogleTest)
 
 add_executable(test-sorts test_sorts.cpp)
-set_target_properties( test-sorts PROPERTIES CXX_SCAN_FOR_MODULES ON)
+set_target_properties(test-sorts PROPERTIES CXX_SCAN_FOR_MODULES ON)
 
 target_link_libraries(test-sorts PRIVATE sorting_algorithms gtest_main)
 
