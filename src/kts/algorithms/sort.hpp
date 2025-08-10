@@ -1,11 +1,7 @@
-module;
-
 #include <algorithm>
 #include <concepts>
 #include <iterator>
 #include <vector>
-
-export module kts_sorting_algorithms;
 
 namespace kts
 {
@@ -119,7 +115,8 @@ void Merge( Iter1 first_l, Sent1 last_l, Iter2 first_r, Sent2 last_r,
 
 }
 
-export namespace kts
+// vvv export when C++20 modules will be widely supported and adapted
+namespace kts
 {
 
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,

@@ -20,16 +20,16 @@ FetchContent_MakeAvailable(GoogleTest)
 
 Then for your target add:
 ``` CMake
-add_target(<target> PRIVATE KtsSortingAlgorithms::sorting_algorithms)
+add_target(<target> PRIVATE Kts::Algorithms)
 ```
 
 ### Usage Example
 
 ``` C++
-import kts_sorting_algorithms;
-
 #include <vector>
 #include <cassert>
+
+#include <kts/algorithms/sort.hpp>
 
 int main()
 {

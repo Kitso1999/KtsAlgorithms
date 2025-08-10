@@ -8,7 +8,7 @@
 #include <ranges>
 #include <vector>
 
-import kts_sorting_algorithms;
+#include <kts/algorithms/sort.hpp>
 
 struct BubbleSortFunc
 {

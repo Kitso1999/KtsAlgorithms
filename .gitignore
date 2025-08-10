@@ -33,3 +33,7 @@
 
 # Formatters
 .clang-format
+
+# CMake
+build/
+CMakeLists.txt.user
