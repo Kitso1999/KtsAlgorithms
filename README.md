@@ -1,5 +1,5 @@
-# KtsSortingAlgorithms
-A collection of sorting algorithms implemented using iterators
+# KtsAlgorithms
+A collection algorithms
 
 ## Getting Started
 ### Requirements
@@ -10,7 +10,7 @@ A collection of sorting algorithms implemented using iterators
 In your project's *CMakeLists.txt* file include following:
 ``` CMake
 FetchContent_Declare(
-    KtsSortingAlgorithms
+    KtsAlgorithms
     GIT_REPOSITORY https://github.com/Kitso1999/KtsSortingAlgorithms.git
     GIT_TAG <version>
 )
