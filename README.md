@@ -1,5 +1,5 @@
 # KtsAlgorithms
-A collection algorithms
+A collection of algorithms
 
 ## Getting Started
 ### Requirements
