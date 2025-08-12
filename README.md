@@ -11,7 +11,7 @@ In your project's *CMakeLists.txt* file include following:
 ``` CMake
 FetchContent_Declare(
     KtsAlgorithms
-    GIT_REPOSITORY https://github.com/Kitso1999/KtsSortingAlgorithms.git
+    GIT_REPOSITORY https://github.com/Kitso1999/KtsAlgorithms.git
     GIT_TAG <version>
 )
 
