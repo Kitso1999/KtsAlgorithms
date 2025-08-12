@@ -15,7 +15,7 @@ FetchContent_Declare(
     GIT_TAG <version>
 )
 
-FetchContent_MakeAvailable(GoogleTest)
+FetchContent_MakeAvailable(KtsAlgorithms)
 ```
 
 Then for your target add:
