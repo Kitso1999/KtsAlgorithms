@@ -47,7 +47,7 @@ template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
 void PopHeap( Iter first, Sent last, Pred pred )
 {
     std::ranges::iter_swap( first, --last );
-    Heapify( first, last, first, pred );
+    Heapify( first, std::move( last ), first, std::move( pred ) );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -136,7 +136,7 @@ void BubbleSort( Iter first, Sent last, Pred pred )
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent>
 void BubbleSort( Iter first, Sent last )
 {
-    BubbleSort( first, last, std::less{} );
+    BubbleSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -152,7 +152,7 @@ void SelectionSort( Iter first, Sent last, Pred pred )
 template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent>
 void SelectionSort( Iter first, Sent last )
 {
-    SelectionSort( first, last, std::less{} );
+    SelectionSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -172,7 +172,7 @@ void InsertionSort( Iter first, Sent last, Pred pred )
 template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent>
 void InsertionSort( Iter first, Sent last )
 {
-    InsertionSort( first, last, std::less{} );
+    InsertionSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -206,7 +206,7 @@ void MergeSort( Iter first, Sent last, Pred pred )
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
 void MergeSort( Iter first, Sent last )
 {
-    MergeSort( first, last, std::less{} );
+    MergeSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -218,14 +218,14 @@ void QuickSort( Iter first, Sent last, Pred pred )
 
     auto partition_point = PartitionWithPivot( first, last, pred );
 
-    QuickSort( first, std::prev( partition_point ), pred );
-    QuickSort( partition_point, last, pred );
+    QuickSort( std::move( first ), std::prev( partition_point ), pred );
+    QuickSort( std::move( partition_point ), std::move( last ), std::move( pred ) );
 }
 
 template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent>
 void QuickSort( Iter first, Sent last )
 {
-    QuickSort( first, last, std::less{} );
+    QuickSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
@@ -241,7 +241,7 @@ void HeapSort( Iter first, Sent last, Pred pred )
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
 void HeapSort( Iter first, Sent last )
 {
-    HeapSort( first, last, std::less{} );
+    HeapSort( std::move( first ), std::move( last ), std::less{} );
 }
 
 } // namespace kts
