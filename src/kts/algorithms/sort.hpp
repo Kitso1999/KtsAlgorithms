@@ -17,14 +17,16 @@ void Heapify( Iter first, Sent last, Iter start, Pred pred )
         const auto r = 2 * i + 2;
 
         auto largest = i;
-        if ( l < size && pred( *(first + largest), *(first + l) ) )
+        if ( l < size && pred( first[ largest ], first[ l ] ) )
             largest = l;
-        if ( r < size && pred( *(first + largest), *(first + r) ) )
+        if ( r < size && pred( first[ largest ], first[ r ] ) )
             largest = r;
 
         if ( largest == i )
             return;
-        std::iter_swap( first + i, first + largest );
+
+        std::ranges::swap( first[ i ], first[ largest ] );
+
         i = largest;
     }
 }
@@ -36,15 +38,15 @@ void PushHeap( Iter first, Sent last, Pred pred )
     const auto size = std::distance( first, last );
 
     if ( size > 1 )
-        for ( auto i = size; i > 0 && pred( first + i / 2, first + i ); i /= 2 )
-            std::swap( first + i / 2, first + i );
+        for ( auto i = size; i > 0 && pred( first[ i / 2 ], first[ i ] ); i /= 2 )
+            std::ranges::swap( first[ i / 2 ], first[ i ] );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent,
          std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
 void PopHeap( Iter first, Sent last, Pred pred )
 {
-    std::iter_swap( first, --last );
+    std::ranges::iter_swap( first, --last );
     Heapify( first, last, first, pred );
 }
 
@@ -77,7 +79,7 @@ Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
     if ( first != last )
         for ( auto next{ std::next( first ) }; next != last; ++next )
             if ( pred( *next, pivot ) )
-                std::iter_swap( first++, next ); // swap out-of-place elements
+                std::ranges::iter_swap( first++, next ); // swap out-of-place elements
 
     auto pivot_pos = std::prev( first );
     if ( begin != pivot_pos ) {
@@ -122,7 +124,7 @@ void BubbleSort( Iter first, Sent last, Pred pred )
         for ( auto left = first, right = std::next( left ); right != last;
               ++left, ++right )
             if ( pred( *right, *left ) ) {
-                std::iter_swap( left, right );
+                std::ranges::iter_swap( left, right );
                 swapped = true;
             }
 
@@ -143,7 +145,7 @@ void SelectionSort( Iter first, Sent last, Pred pred )
 {
     for ( ; first != last; ++first ) {
         auto min = std::min_element( first, last, pred );
-        std::iter_swap( first, min );
+        std::ranges::iter_swap( first, min );
     }
 }
 
@@ -163,7 +165,7 @@ void InsertionSort( Iter first, Sent last, Pred pred )
             const auto l = --walker;
             if ( !pred( *r, *l ) )
                 break;
-            std::iter_swap( l, r );
+            std::ranges::iter_swap( l, r );
         }
 }
 
