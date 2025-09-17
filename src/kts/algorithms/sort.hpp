@@ -59,7 +59,7 @@ void MakeHeap( Iter first, Sent last, Pred pred )
         Heapify( first, last, --walker, pred );
 }
 
-template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
+template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent,
          std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
 Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
 {
@@ -68,30 +68,23 @@ Iter PartitionWithPivot( Iter first, Sent last, Pred pred )
 
     // used for bounds checking, this is not moved around
     const auto begin = first;
+
     auto pivot( std::move( *first ) );
 
-    for ( ++first; first != last; ++first ) {
-        // skip in-place elements at the beginning
-        for ( ; first != last && pred( *first, pivot ); ++first ) {}
+    // skip in-place elements at the beginning
+    while ( ++first != last && pred( *first, pivot ) ) {}
 
-        if ( first == last )
-            break;
-
-        // skip in-place elements at the end
-        do {
-            --last;
-        } while ( first != last && !pred( *last, pivot ) );
-
-        if ( first == last )
-            break;
-        std::iter_swap( first, last ); // swap out-of-place elements
-    }
+    if ( first != last )
+        for ( auto next{ std::next( first ) }; next != last; ++next )
+            if ( pred( *next, pivot ) )
+                std::iter_swap( first++, next ); // swap out-of-place elements
 
     auto pivot_pos = std::prev( first );
     if ( begin != pivot_pos ) {
         *begin = std::move( *pivot_pos );
     }
     *pivot_pos = std::move( pivot );
+
     return first;
 }
 
@@ -214,7 +207,7 @@ void MergeSort( Iter first, Sent last )
     MergeSort( first, last, std::less{} );
 }
 
-template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent,
+template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent,
          std::predicate<std::iter_value_t<Iter>, std::iter_value_t<Iter>> Pred>
 void QuickSort( Iter first, Sent last, Pred pred )
 {
@@ -227,7 +220,7 @@ void QuickSort( Iter first, Sent last, Pred pred )
     QuickSort( partition_point, last, pred );
 }
 
-template<std::bidirectional_iterator Iter, std::sentinel_for<Iter> Sent>
+template<std::forward_iterator Iter, std::sentinel_for<Iter> Sent>
 void QuickSort( Iter first, Sent last )
 {
     QuickSort( first, last, std::less{} );
