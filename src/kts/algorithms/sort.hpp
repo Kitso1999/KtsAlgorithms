@@ -202,9 +202,10 @@ void MergeSort( Iter first, Sent last, Pred pred )
     std::vector<std::iter_value_t<Iter>> temp;
     temp.reserve( size );
 
-    Merge( first_l, last_l, first_r, last_r, std::back_inserter( temp ), pred );
+    Merge( std::make_move_iterator( first_l ), std::make_move_iterator( last_l ), std::make_move_iterator( first_r ),
+           std::make_move_iterator( last_r ), std::back_inserter( temp ), std::move( pred ) );
 
-    std::move( temp.begin(), temp.end(), first );
+    std::move( temp.begin(), temp.end(), std::move( first ) );
 }
 
 template<std::random_access_iterator Iter, std::sentinel_for<Iter> Sent>
